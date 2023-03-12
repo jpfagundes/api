@@ -5,6 +5,7 @@ class IngredientsController {
 
     const ingredients = await knex("ingredients")
     .select("*")
+    .groupBy("name")
 
     return response.json(ingredients);
   }

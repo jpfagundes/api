@@ -2,7 +2,7 @@ const knex = require("../database/knex");
 const AppError = require("../utils/AppError");
 const DiskStorage = require("../providers/DiskStorage");
 
-class PlateImgController {
+class DishImgController {
   async update(request, response) {
     const {id} = request.params;
     const imageFilename = request.file.filename;
@@ -10,25 +10,25 @@ class PlateImgController {
     const diskStorage = new DiskStorage();
 
     try {
-      const plate = await knex("plates")
+      const dish = await knex("dishes")
       .where( 'id', id ).first();
   
   
-      if(!plate) {
+      if(!dish) {
         throw new AppError("Esse prato não existe", 400);
       }
   
-      if(plate.image){
-        await diskStorage.deleteFile(plate.image);
+      if(dish.image){
+        await diskStorage.deleteFile(dish.image);
       }
   
       const filename = await diskStorage.saveFile(imageFilename);
-      plate.image = filename;
+      dish.image = filename;
 
   
-      await knex("plates").update(plate).where('id', id);
+      await knex("dishes").update(dish).where('id', id);
   
-      return response.json(plate);
+      return response.json(dish);
 
     } catch (error) {
 
@@ -37,4 +37,4 @@ class PlateImgController {
   }
 }
 
-module.exports = PlateImgController;
+module.exports = DishImgController;

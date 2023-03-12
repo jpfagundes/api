@@ -1,19 +1,20 @@
 const knex = require("../database/knex");
 
-class PlatesController {
+class DishesController {
   async create(request, response) {
-    const { name, description, ingredients, category, price } = request.body;
+    const { name, description, ingredients, price, image } = request.body;
 
-    const plate_id = await knex("plates").insert({
+    const dish_id = await knex("dishes").insert({
       name,
       description,
-      price
+      price,
+      image
       
     });
 
     const ingredientsInsert = ingredients.map(name => {
       return {
-        plate_id,
+        dish_id,
         name
       }
     });
@@ -27,11 +28,11 @@ class PlatesController {
   async show(request, response) {
     const { id } = request.params;
 
-    const plate = await knex("plates").where({ id }).first();
-    const ingredients = await knex("ingredients").where({ plate_id: id }).orderBy("name");
+    const dish = await knex("dishes").where({ id }).first();
+    const ingredients = await knex("ingredients").where({ dish_id: id }).orderBy("name");
 
     return response.json({
-      ...plate,
+      ...dish,
       ingredients
     });
   }
@@ -39,7 +40,7 @@ class PlatesController {
   async delete (request, response) {
     const { id } = request.params;
 
-    await knex("plates").where({ id }).delete();
+    await knex("dishes").where({ id }).delete();
 
     return response.json();
   }
@@ -47,23 +48,24 @@ class PlatesController {
   async index (request, response) {
     const { name, ingredients } = request.query;
 
-    let plates;
+    let dishes;
 
 
     if (ingredients) {
       const filterIngredients = ingredients.split(',')
       .map (ingredient => ingredient.trim());
 
-      plates = await knex("ingredients")
+      dishes = await knex("ingredients")
       .select("*")
-      .whereLike("plates.name", `%${name}%`)
-      .innerJoin("plates", "plates.id", "ingredients.plate_id")
-      .orderBy("plates.name")
+      .whereLike("dishes.name", `%${name}%`)
+      .innerJoin("dishes", "dishes.id", "ingredients.dish_id")
+      .groupBy("dishes.id")
+      .orderBy("dishes.name")
       
 
 
     } else {
-        plates = await knex("plates")
+        dishes = await knex("dishes")
         .select("*")
         .whereLike("name", `%${name}%`)
         .orderBy("name");
@@ -71,18 +73,18 @@ class PlatesController {
     }
 
     const userIngredients = await knex("ingredients").select("*");
-    const platesWithIngredients = plates.map(plate => {
-      const plateIngredients = userIngredients.filter(ingredient => ingredient.plate_id === plate.id);
+    const dishesWithIngredients = dishes.map(dish => {
+      const dishIngredients = userIngredients.filter(ingredient => ingredient.dish_id === dish.id);
 
       return {
-        ...plate,
-        ingredients: plateIngredients
+        ...dish,
+        ingredients: dishIngredients
       }
     });
 
-    return response.json(platesWithIngredients);
+    return response.json(dishesWithIngredients);
  
   }
 }
 
-module.exports = PlatesController;
+module.exports = DishesController;
