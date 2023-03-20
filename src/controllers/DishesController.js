@@ -1,4 +1,6 @@
 const knex = require("../database/knex");
+const AppError = require("../utils/AppError");
+const DiskStorage = require("../providers/DiskStorage");
 
 function ingredientImage(name) {
   switch (name) {
@@ -57,12 +59,18 @@ function ingredientImage(name) {
 
 class DishesController {
   async create(request, response) {
-    const { name, description, ingredients, price, category } = request.body;
+    const { name, price, description, ingredients, category } = request.body
+    // const image = request.file.filename
+
+    // const diskStorage = new DiskStorage()
+
+    // const filename = await diskStorage.saveFile(image)
 
     const [dish_id] = await knex("dishes").insert({
       name,
       description,
       price,
+     //image:filename,
       category,
     });
 
@@ -138,6 +146,39 @@ class DishesController {
 
     return response.json(dishesWithIngredients);
  
+  }
+
+  async att(request, response) {
+    const { name, price, description, ingredients, category } = request.body
+    const { id } = request.params
+    // const image = request.file.filename
+
+    // const diskStorage = new DiskStorage()
+
+    // const filename = await diskStorage.saveFile(image)
+
+    await knex('dishes').where({ id }).update({
+      name,
+      price,
+      description,
+  //    image: filename,
+      category
+    })
+
+    if (ingredients) {
+      await knex('ingredients').where({ dish_id: id }).delete()
+
+      const ingredientsInsert = ingredients.map(ingredient => {
+        return {
+          name: ingredient,
+          image: ingredientImage(ingredient),
+          dish_id: id
+        }
+      })
+
+      await knex('ingredients').insert(ingredientsInsert)
+    }
+    return response.json()
   }
 }
 
