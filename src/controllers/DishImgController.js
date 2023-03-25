@@ -11,7 +11,7 @@ class DishImgController {
 
     try {
       const dish = await knex("dishes")
-      .where( 'id', id ).first();
+      .where( "id", id ).first();
   
   
       if(!dish) {
@@ -26,7 +26,7 @@ class DishImgController {
       dish.image = filename;
 
   
-      await knex("dishes").update(dish).where('id', id);
+      await knex("dishes").update(dish).where("id", id);
   
       return response.json(dish);
 

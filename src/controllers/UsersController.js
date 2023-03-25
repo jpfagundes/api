@@ -1,6 +1,6 @@
-const knex = require('../database/knex')
-const AppError = require('../utils/AppError')
-const { hash } = require('bcryptjs')
+const knex = require("../database/knex")
+const AppError = require("../utils/AppError")
+const { hash } = require("bcryptjs")
 
 class UsersController {
   async create(request, response) {
@@ -8,14 +8,14 @@ class UsersController {
 
     if (!name || !email || password.length < 6) {
       throw new AppError(
-        'Não foi possivel realizar o cadastro, por favor verifique suas informações'
+        "Não foi possivel realizar o cadastro, por favor verifique suas informações"
       )
     }
 
     const userExists = await knex.select("email").where({ email }).from("users")
 
     if (userExists.length === 1) {
-      throw new AppError('Este email já está em uso', 401)
+      throw new AppError("Este email já está em uso", 401)
     }
 
     const hashedPassword = await hash(password, 8)

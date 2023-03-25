@@ -1,15 +1,7 @@
-const knex = require('../database/knex')
-const AppError = require('../utils/AppError')
+const knex = require("../database/knex")
+const AppError = require("../utils/AppError")
 
 class OrdersController {
-  async index(request, response) {
-    const user_id = request.user.id
-
-    const orders = await knex("orders").where({ user_id })
-
-    return response.json(orders)
-  }
-
   async create(request, response) {
     const user_id = request.user.id
 
@@ -17,7 +9,7 @@ class OrdersController {
 
     if (!status || !description) {
       throw new AppError(
-        'Não foi possivel realizar o cadastro, por favor verifique suas informações'
+        "Não foi possivel realizar o cadastro, por favor verifique suas informações"
       )
     }
 

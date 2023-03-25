@@ -1,9 +1,9 @@
-const knex = require('../database/knex')
-const AppError = require('../utils/AppError')
+const knex = require("../database/knex")
+const AppError = require("../utils/AppError")
 
 class OrdersAdmController {
-  async show(request, response) {
-    const orders = await knex('orders')
+  async index(request, response) {
+    const orders = await knex("orders")
 
     return response.json(orders)
   }
@@ -13,25 +13,25 @@ class OrdersAdmController {
     const { id } = request.params
     const { status } = request.body
 
-    const user = await knex('users').where({ id: user_id }).select().first()
+    const user = await knex("users").where({ id: user_id }).select().first()
 
     if (user.admin) {
       if (
-        status === 'pending' ||
-        status === 'readying' ||
-        status === 'delivered'
+        status === "pending" ||
+        status === "reading" ||
+        status === "delivered"
       ) {
-        await knex('orders')
+        await knex("orders")
           .where({ id })
           .update({ status, update_at: knex.fn.now() })
       } else {
-        throw new AppError('Informações inválidas')
+        throw new AppError("Informações inválidas")
       }
     } else {
-      throw new AppError('Usuaro invalido', 401)
+      throw new AppError("Usuaro invalido", 401)
     }
 
-    return response.send('Pedido atualizado')
+    return response.send("Pedido atualizado")
   }
 }
 
