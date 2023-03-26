@@ -21,11 +21,9 @@
 ### 🛠 Technologies
 The following tools were used in building the project
 
-- [React](https://pt-br.reactjs.org/)
-- [Styled-Components](https://styled-components.com/)
-- [React-Icons](https://react-icons.github.io/react-icons/)
-- [react-elastic-carousel](https://www.npmjs.com/package/@itseasy21/react-elastic-carousel)
-- [Axios](https://axios-http.com/ptbr/docs/urlencoded)
+- [Node-Express](https://expressjs.com/pt-br/)
+- [Multer](https://www.npmjs.com/package/multer)
+- [JWT](https://jwt.io/libraries)
 
 ### Author
 
